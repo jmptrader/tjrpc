@@ -1,0 +1,19 @@
+TJRPC - Trivial JSON Remote Procedure Call
+
+Copyright 2010 Kunshan Wang
+
+TJRPC is a JSON-based RPC tool.  It is a small toy project to be used where
+you just need some simple RPC capability, but do not worry much about its
+performance or functionality.
+
+This program is implemented in Java.  It provides a TCP-based RPC server and
+client implementation, as well as proxy support based on java reflection.
+
+Note that the protocol is NOT the same as json-rpc.org
+
+This program depends on JSON Tools for JSON parsing.
+See http://jsontools.berlios.de/
+
+This program is released under the GNU LGPL licence.
+
+Author: Kunshan Wang <wks1986@gmail.com>
