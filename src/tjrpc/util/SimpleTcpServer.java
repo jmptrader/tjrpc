@@ -46,9 +46,22 @@ public abstract class SimpleTcpServer {
 	}
 
 	public void stop() {
+		System.out.println("Closing server socket...");
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Interrupting server thread...");
 		serverThread.interrupt();
+		System.out.println("Interrupted.");
 		synchronized (clientThreads) {
 			for (ClientThread clientThread : clientThreads.keySet()) {
+				try {
+					clientThread.clientSocket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				clientThread.interrupt();
 			}
 		}
@@ -56,18 +69,21 @@ public abstract class SimpleTcpServer {
 	}
 
 	private void serveAll() {
-		while (true) {
+		while (!Thread.interrupted()) {
 			Socket clientSocket;
 			try {
+				System.out.println("Accepting...");
 				clientSocket = serverSocket.accept();
 			} catch (IOException e) {
 				e.printStackTrace();
 				break;
 			}
+			System.out.println("Accept broken.");
 			ClientThread clientThread = new ClientThread(clientSocket);
 			clientThreads.put(clientThread, clientThread);
 			clientThread.start();
 		}
+		System.out.println("Exiting....");
 	}
 
 	public abstract void handleClient(Socket clientSocket);

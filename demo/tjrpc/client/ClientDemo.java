@@ -15,9 +15,10 @@ public class ClientDemo {
 		ClientAgent agent = new ClientAgent();
 		agent.setChannel(channel);
 		
-		Object result = agent.call("adder", "div", new Object[]{3,0});
-	
+		Object result = agent.call("adder", "div", new Object[]{3,2});
 		System.out.println(result);
+
+		Object result2 = agent.call("closer", "close", new Object[]{});
 	}
 
 }

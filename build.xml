@@ -1,0 +1,52 @@
+<project name="tjrpc" default="dist" basedir=".">
+	<description>
+        simple example build file
+    </description>
+	<!-- set global properties for this build -->
+	<property name="project-name" value="tjrpc" />
+	<property name="src" location="src" />
+	<property name="build" location="build/bin" />
+	<property name="doc" location="build/doc" />
+	<property name="dist" location="build/dist" />
+
+	<path id="dependency-jars">
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath refid="dependency-jars" />
+		</javac>
+	</target>
+	
+	<target name="doc" depends="init" description="generate javadoc documentations">
+		<!-- Create javadocs -->
+		<javadoc sourcepath="${src}" destdir="${doc}" classpathref="dependency-jars"/>
+	</target>
+
+	<target name="dist" depends="compile,doc" description="generate the distribution">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}" />
+
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-bin.jar" basedir="${build}" update="true" />
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-doc.jar" basedir="${doc}" update="true" />
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-src.jar" basedir="${src}" update="true" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+</project>
