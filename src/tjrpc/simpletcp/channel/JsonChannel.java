@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.rpc;
+package tjrpc.simpletcp.channel;
 
-public interface RpcCallable {
-	public abstract Object call(String object, String method, Object[] args) throws Exception;
+public interface JsonChannel extends JsonReader, JsonWriter {
+
 }

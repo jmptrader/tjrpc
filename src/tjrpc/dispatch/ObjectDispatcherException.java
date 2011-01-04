@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.server;
+package tjrpc.dispatch;
 
 public class ObjectDispatcherException extends RuntimeException {
 

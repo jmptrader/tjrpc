@@ -16,10 +16,24 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.channel;
+package tjrpc.simpletcp.client;
 
-public interface Closeable {
+import java.lang.reflect.Proxy;
 
-	public abstract void close();
-
+public class ProxyManager {
+	public static <IFace> IFace newProxy(String host, int port, String objectName, Class<IFace> iface) {
+		SocketClientAgent agent = new SocketClientAgent(host, port);
+		ProxyHelper helper = new ProxyHelper();
+		helper.setClientAgent(agent);
+		helper.setObjectName(objectName);
+		
+		@SuppressWarnings("unchecked")
+		IFace proxy = (IFace) Proxy.newProxyInstance(iface.getClassLoader(), new Class<?>[]{iface}, helper);
+		return proxy;
+	}
+	
+	public static void closeProxy(Object proxy) {
+		ProxyHelper helper = (ProxyHelper) Proxy.getInvocationHandler(proxy);
+		helper.close();
+	}
 }

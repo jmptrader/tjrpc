@@ -1,6 +1,6 @@
 package tjrpc.client;
 
-import tjrpc.client.ProxyManager;
+import tjrpc.simpletcp.client.ProxyManager;
 
 interface IAdder {
 	public int add(int a, int b);

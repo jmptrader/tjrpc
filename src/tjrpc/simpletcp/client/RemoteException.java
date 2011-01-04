@@ -16,39 +16,24 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.client;
+package tjrpc.simpletcp.client;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+public class RemoteException extends ClientException {
+	private static final long serialVersionUID = 7095597450462300756L;
 
-public class ProxyHelper implements InvocationHandler {
-	private ClientAgent clientAgent;
-	private String objectName;
-
-	public ClientAgent getClientAgent() {
-		return clientAgent;
+	public RemoteException() {
 	}
 
-	public void setClientAgent(ClientAgent clientAgent) {
-		this.clientAgent = clientAgent;
+	public RemoteException(String message) {
+		super(message);
 	}
 
-	public String getObjectName() {
-		return objectName;
+	public RemoteException(Throwable cause) {
+		super(cause);
 	}
 
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
-	}
-
-	@Override
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
-		return clientAgent.call(objectName, method.getName(), args);
-	}
-	
-	public void close() {
-		clientAgent.getChannel().close();
+	public RemoteException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 }

@@ -16,10 +16,42 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.channel;
+package tjrpc.simpletcp.channel;
+
+import java.io.*;
+
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
 
 import com.sdicons.json.model.JSONValue;
+import com.sdicons.json.parser.JSONParser;
 
-public interface JsonWriter extends Closeable {
-	void write(JSONValue value);
+public class StreamJsonReader implements JsonReader {
+	private Reader reader;
+	private JSONParser parser;
+	
+	public StreamJsonReader(Reader reader) {
+		this.reader = reader;
+		this.parser = new JSONParser(reader);
+	}
+
+	@Override
+	public void close() {
+		try {
+			reader.close();
+		} catch (IOException e) {
+			throw new JsonIOException(e);
+		}
+	}
+
+	@Override
+	public JSONValue read() {
+		try {
+			return parser.nextValue();
+		} catch (TokenStreamException e) {
+			throw new JsonIOException(e);
+		} catch (RecognitionException e) {
+			return null;
+		}
+	}
 }

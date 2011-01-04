@@ -16,34 +16,38 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.server;
+package tjrpc.dispatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import tjrpc.rpc.RpcCallable;
+import tjrpc.rpc.RpcRequest;
+import tjrpc.rpc.RpcResponse;
 
-public class ObjectDispatcher implements RpcCallable {
+public class ObjectDispatcher implements IObjectDispatcher {
 	private Map<String, Object> objects = new HashMap<String, Object>();
 
+	@Override
 	public Object addObject(String name, Object object) {
 		return objects.put(name, object);
 	}
 
+	@Override
 	public Object removeObject(String name) {
 		return objects.remove(name);
 	}
 
 	@Override
-	public Object call(String objectName, String methodName, Object[] args) {
-	
+	public Object call(String objectName, String methodName, Object[] args)
+			throws NestedException, ObjectDispatcherException {
+
 		Object obj = objects.get(objectName);
 		if (obj == null) {
-			throw new ObjectDispatcherException("No such object: " + objectName);
+			throw new IllegalArgumentException("No such object: " + objectName);
 		}
-	
+
 		Method method = null;
 		Method[] methods = obj.getClass().getMethods();
 		for (Method m : methods) {
@@ -52,19 +56,31 @@ public class ObjectDispatcher implements RpcCallable {
 			}
 		}
 		if (method == null) {
-			throw new ObjectDispatcherException("No such method: " + methodName);
+			throw new IllegalArgumentException("No such method: " + methodName);
 		}
-	
+
 		Object returnValue;
 		try {
 			returnValue = method.invoke(obj, args);
 		} catch (InvocationTargetException e) {
-			throw new ObjectDispatcherException(e.getTargetException());
+			throw new NestedException(e.getTargetException());
 		} catch (Exception e) {
 			throw new ObjectDispatcherException(e);
 		}
-	
+
 		return returnValue;
 	}
 
+	@Override
+	public RpcResponse invoke(RpcRequest request) {
+		RpcResponse returnResponse = null;
+		try {
+			Object returnValue = call(request.getObject(), request.getMethod(),
+					request.getParams());
+			returnResponse = RpcResponse.normal(returnValue);
+		} catch (Exception e) {
+			returnResponse = RpcResponse.error(e.getMessage());
+		}
+		return returnResponse;
+	}
 }

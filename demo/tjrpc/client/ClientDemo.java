@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import tjrpc.channel.SocketJsonChannel;
-import tjrpc.client.ClientAgent;
+import tjrpc.simpletcp.channel.SocketJsonChannel;
+import tjrpc.simpletcp.client.ClientAgent;
 
 public class ClientDemo {
 
@@ -19,6 +19,7 @@ public class ClientDemo {
 		System.out.println(result);
 
 		Object result2 = agent.call("closer", "close", new Object[]{});
+		System.out.println(result2);
 	}
 
 }

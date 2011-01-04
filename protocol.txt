@@ -1,0 +1,27 @@
+/**
+ * Wks-Json-Rpc Protocol
+ * <p>
+ * Request: {"object": "a string", "method": "a string", "params": ["a",
+ * "list"]}
+ * <dl>
+ * <dt>object
+ * <dd>An arbitrary string that uniquely identifies an object.
+ * <dt>method
+ * <dd>The method name.
+ * <dt>params
+ * <dd>A list of params.
+ * </dl>
+ * <p>
+ * Response: {"value": "return value", "error": "message"}
+ * <dl>
+ * <dt>value
+ * <dd>The return value
+ * <dt>error
+ * <dd>The error message (string) when errors occur. none when okay.
+ * </dl>
+ * <p>
+ * Params and return values are restricted to number, string, boolean, none.
+ * 
+ * @author Kunshan Wang
+ * 
+ */

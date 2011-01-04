@@ -16,14 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.util;
+package tjrpc.simpletcp.util;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public abstract class SimpleTcpServer {
+	private static final Logger logger = LogManager
+			.getLogger(SimpleTcpServer.class);
+
 	private ServerSocket serverSocket;
 	private ServerThread serverThread;
 
@@ -46,21 +52,19 @@ public abstract class SimpleTcpServer {
 	}
 
 	public void stop() {
-		System.out.println("Closing server socket...");
+		logger.debug("Closing server socket...");
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		System.out.println("Interrupting server thread...");
+		logger.debug("Interrupting server thread...");
 		serverThread.interrupt();
-		System.out.println("Interrupted.");
+		logger.debug("Interrupted.");
 		synchronized (clientThreads) {
 			for (ClientThread clientThread : clientThreads.keySet()) {
 				try {
 					clientThread.clientSocket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
 				}
 				clientThread.interrupt();
 			}
@@ -72,18 +76,18 @@ public abstract class SimpleTcpServer {
 		while (!Thread.interrupted()) {
 			Socket clientSocket;
 			try {
-				System.out.println("Accepting...");
+				logger.debug("Accepting...");
 				clientSocket = serverSocket.accept();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.debug("Server socket closed");
 				break;
 			}
-			System.out.println("Accept broken.");
+			logger.debug("Accepted.");
 			ClientThread clientThread = new ClientThread(clientSocket);
 			clientThreads.put(clientThread, clientThread);
 			clientThread.start();
 		}
-		System.out.println("Exiting....");
+		logger.debug("Exiting....");
 	}
 
 	public abstract void handleClient(Socket clientSocket);
@@ -112,7 +116,6 @@ public abstract class SimpleTcpServer {
 					try {
 						clientSocket.close();
 					} catch (IOException e) {
-						e.printStackTrace();
 					}
 				}
 			}

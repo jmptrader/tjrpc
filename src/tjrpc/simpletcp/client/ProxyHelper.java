@@ -16,42 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.channel;
+package tjrpc.simpletcp.client;
 
-import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
+public class ProxyHelper implements InvocationHandler {
+	private ClientAgent clientAgent;
+	private String objectName;
 
-import com.sdicons.json.model.JSONValue;
-import com.sdicons.json.parser.JSONParser;
+	public ClientAgent getClientAgent() {
+		return clientAgent;
+	}
 
-public class StreamJsonReader implements JsonReader {
-	private Reader reader;
-	private JSONParser parser;
+	public void setClientAgent(ClientAgent clientAgent) {
+		this.clientAgent = clientAgent;
+	}
+
+	public String getObjectName() {
+		return objectName;
+	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
+	}
+
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args)
+			throws Throwable {
+		return clientAgent.call(objectName, method.getName(), args);
+	}
 	
-	public StreamJsonReader(Reader reader) {
-		this.reader = reader;
-		this.parser = new JSONParser(reader);
-	}
-
-	@Override
 	public void close() {
-		try {
-			reader.close();
-		} catch (IOException e) {
-			throw new JsonIOException(e);
-		}
+		clientAgent.getChannel().close();
 	}
 
-	@Override
-	public JSONValue read() {
-		try {
-			return parser.nextValue();
-		} catch (TokenStreamException e) {
-			throw new JsonIOException(e);
-		} catch (RecognitionException e) {
-			return null;
-		}
-	}
 }

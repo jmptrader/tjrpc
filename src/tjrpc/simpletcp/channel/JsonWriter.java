@@ -16,25 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.client;
+package tjrpc.simpletcp.channel;
 
-public class ClientException extends RuntimeException {
+import com.sdicons.json.model.JSONValue;
 
-	private static final long serialVersionUID = 8120922561649656538L;
-
-	public ClientException() {
-	}
-
-	public ClientException(String message) {
-		super(message);
-	}
-
-	public ClientException(Throwable cause) {
-		super(cause);
-	}
-
-	public ClientException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+public interface JsonWriter extends Closeable {
+	void write(JSONValue value);
 }

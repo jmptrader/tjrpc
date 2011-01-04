@@ -9,5 +9,6 @@
 			<attribute name="javadoc_location" value="file:/home/wks/java_packages/jsontools/jsontools-core-1.7-javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

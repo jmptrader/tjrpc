@@ -16,36 +16,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.channel;
+package tjrpc.simpletcp.client;
 
-import java.io.*;
+public class ClientException extends RuntimeException {
 
-import com.sdicons.json.model.JSONValue;
+	private static final long serialVersionUID = 8120922561649656538L;
 
-public class StreamJsonWriter implements JsonWriter {
-	private Writer writer;
-	
-	public StreamJsonWriter(Writer writer) {
-		this.writer = writer;
+	public ClientException() {
 	}
 
-	@Override
-	public void close() {
-		try {
-			writer.close();
-		} catch (IOException e) {
-			throw new JsonIOException(e);
-		}
+	public ClientException(String message) {
+		super(message);
 	}
 
-	@Override
-	public void write(JSONValue value) {
-		try {
-			writer.write(value.render(false)+" ");
-			writer.flush();
-		} catch (IOException e) {
-			throw new JsonIOException(e);
-		}
+	public ClientException(Throwable cause) {
+		super(cause);
+	}
+
+	public ClientException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 }

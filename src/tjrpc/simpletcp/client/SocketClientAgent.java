@@ -16,8 +16,30 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.channel;
+package tjrpc.simpletcp.client;
 
-public interface JsonChannel extends JsonReader, JsonWriter {
+import java.net.Socket;
+
+import tjrpc.simpletcp.channel.SocketJsonChannel;
+
+public class SocketClientAgent extends ClientAgent {
+
+	public SocketClientAgent(Socket socket) {
+		this.setChannel(new SocketJsonChannel(socket));
+	}
+
+	public SocketClientAgent(String host, int port) {
+		Socket socket;
+		try {
+			socket = new Socket(host, port);
+		} catch (Exception e) {
+			throw new ClientException(e);
+		}
+		this.setChannel(new SocketJsonChannel(socket));
+	}
+
+	public void close() {
+		getChannel().close();
+	}
 
 }

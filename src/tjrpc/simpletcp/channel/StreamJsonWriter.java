@@ -16,36 +16,36 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.client;
+package tjrpc.simpletcp.channel;
 
-import tjrpc.channel.JsonChannel;
-import tjrpc.rpc.RpcCallable;
-import tjrpc.rpc.RpcRequest;
-import tjrpc.rpc.RpcResponse;
+import java.io.*;
 
-public class ClientAgent implements RpcCallable {
+import com.sdicons.json.model.JSONValue;
 
-	private JsonChannel channel;
-
-	public JsonChannel getChannel() {
-		return channel;
-	}
-
-	public void setChannel(JsonChannel channel) {
-		this.channel = channel;
+public class StreamJsonWriter implements JsonWriter {
+	private Writer writer;
+	
+	public StreamJsonWriter(Writer writer) {
+		this.writer = writer;
 	}
 
 	@Override
-	public Object call(String object, String method, Object[] args) {
-		RpcRequest req = new RpcRequest(object, method, args);
-		channel.write(req.toJson());
-		RpcResponse resp = RpcResponse.fromJson(channel.read());
-
-		if (resp.getError() != null) {
-			throw new RemoteException(resp.getError());
+	public void close() {
+		try {
+			writer.close();
+		} catch (IOException e) {
+			throw new JsonIOException(e);
 		}
+	}
 
-		return resp.getValue();
+	@Override
+	public void write(JSONValue value) {
+		try {
+			writer.write(value.render(false)+" ");
+			writer.flush();
+		} catch (IOException e) {
+			throw new JsonIOException(e);
+		}
 	}
 
 }
