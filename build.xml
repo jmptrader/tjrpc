@@ -1,6 +1,6 @@
 <project name="tjrpc" default="dist" basedir=".">
 	<description>
-        simple example build file
+		simple example build file
     </description>
 	<!-- set global properties for this build -->
 	<property name="project-name" value="tjrpc" />
@@ -27,11 +27,12 @@
 		<javac srcdir="${src}" destdir="${build}">
 			<classpath refid="dependency-jars" />
 		</javac>
+		<copy file="${src}/log4j.properties" tofile="${build}/log4j.properties" />
 	</target>
-	
+
 	<target name="doc" depends="init" description="generate javadoc documentations">
 		<!-- Create javadocs -->
-		<javadoc sourcepath="${src}" destdir="${doc}" classpathref="dependency-jars"/>
+		<javadoc sourcepath="${src}" destdir="${doc}" classpathref="dependency-jars" />
 	</target>
 
 	<target name="dist" depends="compile,doc" description="generate the distribution">
@@ -39,9 +40,12 @@
 		<mkdir dir="${dist}" />
 
 		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-		<jar jarfile="${dist}/${project-name}-${DSTAMP}-bin.jar" basedir="${build}" update="true" />
-		<jar jarfile="${dist}/${project-name}-${DSTAMP}-doc.jar" basedir="${doc}" update="true" />
-		<jar jarfile="${dist}/${project-name}-${DSTAMP}-src.jar" basedir="${src}" update="true" />
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-bin.jar" basedir="${build}"
+			update="true" />
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-doc.jar" basedir="${doc}"
+			update="true" />
+		<jar jarfile="${dist}/${project-name}-${DSTAMP}-src.jar" basedir="${src}"
+			update="true" />
 	</target>
 
 	<target name="clean" description="clean up">
