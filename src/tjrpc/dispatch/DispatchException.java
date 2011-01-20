@@ -16,24 +16,24 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.rpc;
+package tjrpc.dispatch;
 
-public class RpcException extends RuntimeException {
+public class DispatchException extends RuntimeException {
 
-	private static final long serialVersionUID = -8989151373845528134L;
+	private static final long serialVersionUID = -4225534519547975642L;
 
-	public RpcException() {
+	public DispatchException() {
 	}
 
-	public RpcException(String message) {
+	public DispatchException(String message) {
 		super(message);
 	}
 
-	public RpcException(Throwable cause) {
+	public DispatchException(Throwable cause) {
 		super(cause);
 	}
 
-	public RpcException(String message, Throwable cause) {
+	public DispatchException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

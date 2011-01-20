@@ -18,6 +18,7 @@
  */
 package tjrpc.simpletcp.client;
 
+import tjrpc.json.JsonRpcSerializer;
 import tjrpc.rpc.RpcRequest;
 import tjrpc.rpc.RpcResponse;
 import tjrpc.simpletcp.channel.JsonChannel;
@@ -25,6 +26,7 @@ import tjrpc.simpletcp.channel.JsonChannel;
 public class ClientAgent {
 
 	private JsonChannel channel;
+	private JsonRpcSerializer serializer = new JsonRpcSerializer();
 
 	public JsonChannel getChannel() {
 		return channel;
@@ -36,11 +38,12 @@ public class ClientAgent {
 
 	public Object call(String object, String method, Object[] args) {
 		RpcRequest req = new RpcRequest(object, method, args);
-		channel.write(req.toJson());
-		RpcResponse resp = RpcResponse.fromJson(channel.read());
+		channel.write(serializer.requestToJson(req));
+		RpcResponse resp = serializer.jsonToResponse(channel.read());
 
-		if (resp.getError() != null) {
-			throw new RemoteException(resp.getError());
+		if (!resp.isSuccess()) {
+			throw new RemoteException(resp.getExceptionClass() + ":"
+					+ resp.getExceptionMessage());
 		}
 
 		return resp.getValue();

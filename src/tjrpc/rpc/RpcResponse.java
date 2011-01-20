@@ -18,16 +18,19 @@
  */
 package tjrpc.rpc;
 
-import tjrpc.util.JsonUtils;
-
-import com.sdicons.json.model.JSONNull;
-import com.sdicons.json.model.JSONObject;
-import com.sdicons.json.model.JSONString;
-import com.sdicons.json.model.JSONValue;
-
 public class RpcResponse {
+	private boolean success;
 	private Object value;
-	private String error;
+	private String exceptionClass;
+	private String exceptionMessage;
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
 
 	public Object getValue() {
 		return value;
@@ -37,68 +40,43 @@ public class RpcResponse {
 		this.value = value;
 	}
 
-	public String getError() {
-		return error;
+	public String getExceptionClass() {
+		return exceptionClass;
 	}
 
-	public void setError(String error) {
-		this.error = error;
+	public void setExceptionClass(String exceptionClass) {
+		this.exceptionClass = exceptionClass;
 	}
 
-	public RpcResponse() {
-		super();
+	public String getExceptionMessage() {
+		return exceptionMessage;
 	}
 
-	public RpcResponse(Object value, String error) {
-		super();
-		this.value = value;
-		this.error = error;
-	}
-
-	public JSONObject toJson() {
-		JSONObject responseObj = new JSONObject();
-		responseObj.getValue().put("value", JsonUtils.safeDecorate(value));
-		responseObj.getValue().put("error", JsonUtils.safeDecorate(error));
-		return responseObj;
-	}
-
-	public static RpcResponse fromJson(JSONValue response) {
-		try {
-			JSONObject rObj = (JSONObject) response;
-
-			JSONValue jVal = rObj.get("value");
-			JSONValue jErrVal = rObj.get("error");
-			
-			JSONValue jErr = JSONNull.NULL;
-			if (!jErrVal.isNull()) {
-				jErr = (JSONString) jErrVal;
-			}
-
-			Object value = JsonUtils.safeStrip(jVal);
-			String error = (String) JsonUtils.safeStrip(jErr);
-
-			RpcResponse resp = new RpcResponse();
-			resp.setValue(value);
-			resp.setError(error);
-			return resp;
-		} catch (ClassCastException e) {
-			throw new RpcException("Bad Wks-Json-Rpc response", e);
-		} catch (IllegalArgumentException e) {
-			throw new RpcException("Bad Wks-Json-Rpc response", e);
-		}
+	public void setExceptionMessage(String exceptionMessage) {
+		this.exceptionMessage = exceptionMessage;
 	}
 
 	public static RpcResponse normal(Object value) {
 		RpcResponse resp = new RpcResponse();
+		resp.setSuccess(true);
 		resp.setValue(value);
-		resp.setError(null);
+		resp.setExceptionClass(null);
+		resp.setExceptionMessage(null);
 		return resp;
 	}
 
-	public static RpcResponse error(String error) {
+	public static RpcResponse error(String exceptionClass, String exceptionMessage) {
 		RpcResponse resp = new RpcResponse();
+		resp.setSuccess(false);
 		resp.setValue(null);
-		resp.setError(error);
+		resp.setExceptionClass(exceptionClass);
+		resp.setExceptionMessage(exceptionMessage);
 		return resp;
+	}
+
+	public static RpcResponse error(Throwable e) {
+		String exceptionClass = e.getClass().getCanonicalName();
+		String exceptionMessage = e.getMessage();
+		return error(exceptionClass, exceptionMessage);
 	}
 }

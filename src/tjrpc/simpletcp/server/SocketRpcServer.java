@@ -24,11 +24,12 @@ import java.net.*;
 import com.sdicons.json.model.JSONObject;
 import com.sdicons.json.model.JSONValue;
 
-import tjrpc.dispatch.IObjectDispatcher;
-import tjrpc.dispatch.NestedException;
 import tjrpc.dispatch.ObjectDispatcher;
-import tjrpc.dispatch.ObjectDispatcherException;
-import tjrpc.rpc.RpcException;
+import tjrpc.dispatch.NestedException;
+import tjrpc.dispatch.ObjectDispatcherImpl;
+import tjrpc.dispatch.DispatchException;
+import tjrpc.json.JsonRpcSerializer;
+import tjrpc.rpc.CallableService;
 import tjrpc.rpc.RpcRequest;
 import tjrpc.rpc.RpcResponse;
 import tjrpc.simpletcp.channel.*;
@@ -37,12 +38,14 @@ import tjrpc.simpletcp.util.SimpleTcpServer;
 import org.apache.log4j.Logger;
 import org.apache.log4j.LogManager;
 
-public class SocketRpcServer implements IObjectDispatcher {
+public class SocketRpcServer implements ObjectDispatcher {
 	private static final Logger logger = LogManager
 			.getLogger(SocketRpcServer.class);
 
 	private TCPServer server;
-	private ObjectDispatcher objectDispatcher = new ObjectDispatcher();
+	private ObjectDispatcherImpl objectDispatcher = new ObjectDispatcherImpl();
+	private CallableService callableService = new CallableService(objectDispatcher);
+	private JsonRpcSerializer serializer = new JsonRpcSerializer();
 
 	/* BEGIN: Delegate methods to the objectDispatcher object */
 
@@ -55,12 +58,8 @@ public class SocketRpcServer implements IObjectDispatcher {
 	}
 
 	public Object call(String objectName, String methodName, Object[] args)
-			throws NestedException, ObjectDispatcherException {
+			throws NestedException, DispatchException {
 		return objectDispatcher.call(objectName, methodName, args);
-	}
-
-	public RpcResponse invoke(RpcRequest request) {
-		return objectDispatcher.invoke(request);
 	}
 
 	/* END: Delegate methods to the objectDispatcher object */
@@ -103,21 +102,16 @@ public class SocketRpcServer implements IObjectDispatcher {
 						// remote closed
 						break;
 					}
-					RpcRequest request = RpcRequest.fromJson(jRequest);
+					RpcRequest request = serializer.jsonToRequest(jRequest);
 					logger.info(String.format("Request from %s: %s.%s(...)",
 							clientSocket.getInetAddress().toString(),
 							request.getObject(), request.getMethod()));
-					RpcResponse response = invoke(request);
-					JSONObject jResponse = response.toJson();
+					RpcResponse response = callableService.invoke(request);
+					JSONObject jResponse = serializer.responseToJson(response);
 					channel.write(jResponse);
 				}
 			} catch (JsonIOException e) {
 				logger.error(String.format("Connection is broken from %s",
-						clientSocket.getInetAddress().toString()), e);
-			} catch (RpcException e) {
-				// Bad request
-				// Or a server-side object returned an unconvertible value.
-				logger.error(String.format("Error handling request from %s",
 						clientSocket.getInetAddress().toString()), e);
 			} finally {
 				logger.info(String.format("Connection closing %s",

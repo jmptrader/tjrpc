@@ -1,20 +1,6 @@
 package tjrpc.dispatch;
 
-import tjrpc.rpc.RpcService;
-
-/**
- * The interface to the {@link ObjectDispatcher} class. It exists so that other
- * class can masquerade this object by implement this interface and delegate its
- * methods to a nested {@link ObjectDispatcher} object.
- * 
- * @author wks
- * 
- */
-public interface IObjectDispatcher extends RpcService {
-
-	public abstract Object addObject(String name, Object object);
-
-	public abstract Object removeObject(String name);
+public interface Callable {
 
 	/**
 	 * Call a method with a given name for the object, a name of the method and
@@ -36,11 +22,11 @@ public interface IObjectDispatcher extends RpcService {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the object or method specified by the objectName or
 	 *             the methodName parameter is not found.
-	 * @throws ObjectDispatcherException
+	 * @throws DispatchException
 	 *             Thrown if anything else went wrong except the dispatched
 	 *             method itself throws an exception.
 	 */
 	public abstract Object call(String objectName, String methodName,
-			Object[] args) throws NestedException, ObjectDispatcherException;
+			Object[] args) throws NestedException, DispatchException;
 
 }

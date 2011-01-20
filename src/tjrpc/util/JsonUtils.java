@@ -25,7 +25,7 @@ import java.util.*;
 import com.sdicons.json.model.*;
 
 public class JsonUtils {
-	public static Object recursiveGetValue(JSONValue value) {
+	public static Object recursiveGetValue(JSONValue value) throws IllegalArgumentException {
 		if (value instanceof JSONString) {
 			return ((JSONString) value).getValue();
 		} else if (value instanceof JSONInteger) {
@@ -54,7 +54,7 @@ public class JsonUtils {
 	}
 	
 
-	public static Object safeStrip(JSONValue jsonValue) {
+	public static Object safeStrip(JSONValue jsonValue) throws IllegalArgumentException {
 		if (jsonValue.isNull() || jsonValue.isBoolean() || jsonValue.isString()) {
 			return jsonValue.strip();
 		} else if (jsonValue.isInteger()) {
@@ -67,7 +67,7 @@ public class JsonUtils {
 		}
 	}
 
-	public static JSONValue safeDecorate(Object object) {
+	public static JSONValue safeDecorate(Object object) throws IllegalArgumentException {
 		if (object instanceof Integer || object instanceof Long
 				|| object instanceof Byte || object instanceof Short) {
 			object = BigInteger.valueOf(((Number) object).longValue());

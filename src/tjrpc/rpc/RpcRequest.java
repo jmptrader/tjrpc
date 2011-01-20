@@ -18,13 +18,6 @@
  */
 package tjrpc.rpc;
 
-import tjrpc.util.JsonUtils;
-
-import com.sdicons.json.model.JSONArray;
-import com.sdicons.json.model.JSONObject;
-import com.sdicons.json.model.JSONString;
-import com.sdicons.json.model.JSONValue;
-
 public class RpcRequest {
 	private String object;
 	private String method;
@@ -63,44 +56,6 @@ public class RpcRequest {
 		this.object = object;
 		this.method = method;
 		this.params = params;
-	}
-
-	public JSONObject toJson() {
-		JSONObject requestObj = new JSONObject();
-		requestObj.getValue().put("object", JsonUtils.safeDecorate(object));
-		requestObj.getValue().put("method", JsonUtils.safeDecorate(method));
-		JSONArray paramsArray = new JSONArray();
-		for (Object param : params) {
-			paramsArray.getValue().add(JsonUtils.safeDecorate(param));
-		}
-		requestObj.getValue().put("params", paramsArray);
-		return requestObj;
-	}
-
-	public static RpcRequest fromJson(JSONValue request) {
-		try {
-			JSONObject rObj = (JSONObject) request;
-			JSONString jObj = (JSONString) rObj.get("object");
-			JSONString jMet = (JSONString) rObj.get("method");
-			JSONArray jPar = (JSONArray) rObj.get("params");
-
-			String object = (String) JsonUtils.safeStrip(jObj);
-			String method = (String) JsonUtils.safeStrip(jMet);
-			Object[] params = new Object[jPar.size()];
-			for (int i = 0; i < jPar.size(); i++) {
-				params[i] = JsonUtils.safeStrip(jPar.get(i));
-			}
-
-			RpcRequest req = new RpcRequest();
-			req.setObject(object);
-			req.setMethod(method);
-			req.setParams(params);
-			return req;
-		} catch (ClassCastException e) {
-			throw new RpcException("Bad Wks-Json-Rpc request", e);
-		} catch (IllegalArgumentException e) {
-			throw new RpcException("Bad Wks-Json-Rpc request", e);
-		}
 	}
 
 }
