@@ -111,7 +111,7 @@ public class HttpRpcServer extends AbstractRpcServer {
 
 			baseRequest.setHandled(true);
 			response.setStatus(200);
-			response.setCharacterEncoding(request.getCharacterEncoding());
+			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(stringResponse);
 		};
 	}

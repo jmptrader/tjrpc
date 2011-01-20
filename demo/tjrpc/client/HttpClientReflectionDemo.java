@@ -1,11 +1,11 @@
 package tjrpc.client;
 
-import tjrpc.simpletcp.client.SimpleTcpRpcClient;
+import tjrpc.http.client.HttpRpcClient;
 
-public class SimpleTcpClientReflectionDemo {
+public class HttpClientReflectionDemo {
 
 	public static void main(String[] args) {
-		SimpleTcpRpcClient client = new SimpleTcpRpcClient("127.0.0.1", 1244);
+		RpcClient client = new HttpRpcClient("http://localhost:1245/");
 		IAdder adderProxy = client.createProxy("adder", IAdder.class);
 
 		int invocationCount = 0;

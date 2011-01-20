@@ -24,7 +24,6 @@ import java.net.*;
 import com.sdicons.json.model.JSONObject;
 import com.sdicons.json.model.JSONValue;
 
-import tjrpc.dispatch.ObjectDispatcher;
 import tjrpc.rpc.RpcRequest;
 import tjrpc.rpc.RpcResponse;
 import tjrpc.server.AbstractRpcServer;

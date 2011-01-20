@@ -10,7 +10,7 @@ public class HttpServerDemo {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		RpcServer svr = new HttpRpcServer(1244);
+		RpcServer svr = new HttpRpcServer(1245);
 		
 		Adder adder = new Adder();
 		svr.addObject("adder", adder);

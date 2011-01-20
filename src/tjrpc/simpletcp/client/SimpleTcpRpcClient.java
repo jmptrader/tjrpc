@@ -42,7 +42,8 @@ public class SimpleTcpRpcClient extends AbstractRpcClient {
 		try {
 			socket = new Socket(host, port);
 		} catch (Exception e) {
-			throw new ClientException(e);
+			throw new ClientException(String.format(
+					"Error connecting to server %s:%d", host, port), e);
 		}
 		this.channel = new SocketJsonChannel(socket);
 	}
@@ -54,8 +55,13 @@ public class SimpleTcpRpcClient extends AbstractRpcClient {
 	@Override
 	public Object call(String object, String method, Object[] args) {
 		RpcRequest req = new RpcRequest(object, method, args);
-		channel.write(serializer.requestToJson(req));
-		RpcResponse resp = serializer.jsonToResponse(channel.read());
+		RpcResponse resp;
+		try {
+			channel.write(serializer.requestToJson(req));
+			resp = serializer.jsonToResponse(channel.read());
+		} catch (Exception e) {
+			throw new ClientException("Error communicating with server", e);
+		}
 
 		if (!resp.isSuccess()) {
 			throw new RemoteException(resp.getExceptionClass(),

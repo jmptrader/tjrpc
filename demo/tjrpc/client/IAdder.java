@@ -16,20 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.dispatch;
+package tjrpc.client;
 
-/**
- * The interface to the {@link ObjectDispatcherImpl} class. It exists so that other
- * class can masquerade this object by implement this interface and delegate its
- * methods to a nested {@link ObjectDispatcherImpl} object.
- * 
- * @author Kunshan Wang
- * 
- */
-public interface ObjectDispatcher extends Callable {
-
-	public abstract Object addObject(String name, Object object);
-
-	public abstract Object removeObject(String name);
-
+interface IAdder {
+	public int add(int a, int b);
 }
