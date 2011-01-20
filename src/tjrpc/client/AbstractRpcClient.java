@@ -16,24 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.simpletcp.client;
+package tjrpc.client;
 
 import java.lang.reflect.Proxy;
 
-public class ProxyManager {
-	public static <IFace> IFace newProxy(String host, int port, String objectName, Class<IFace> iface) {
-		SocketClientAgent agent = new SocketClientAgent(host, port);
+
+public abstract class AbstractRpcClient implements RpcClient {
+
+	@Override
+	public <T> T createProxy(String objectName, Class<T> iface) {
 		ProxyHelper helper = new ProxyHelper();
-		helper.setClientAgent(agent);
+		helper.setClient(this);
 		helper.setObjectName(objectName);
-		
 		@SuppressWarnings("unchecked")
-		IFace proxy = (IFace) Proxy.newProxyInstance(iface.getClassLoader(), new Class<?>[]{iface}, helper);
+		T proxy = (T) Proxy.newProxyInstance(iface.getClassLoader(),
+				new Class<?>[] { iface }, helper);
 		return proxy;
 	}
-	
-	public static void closeProxy(Object proxy) {
-		ProxyHelper helper = (ProxyHelper) Proxy.getInvocationHandler(proxy);
-		helper.close();
-	}
+
 }

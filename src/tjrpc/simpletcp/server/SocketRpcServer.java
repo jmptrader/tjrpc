@@ -25,61 +25,26 @@ import com.sdicons.json.model.JSONObject;
 import com.sdicons.json.model.JSONValue;
 
 import tjrpc.dispatch.ObjectDispatcher;
-import tjrpc.dispatch.NestedException;
-import tjrpc.dispatch.ObjectDispatcherImpl;
-import tjrpc.dispatch.DispatchException;
-import tjrpc.json.JsonRpcSerializer;
-import tjrpc.rpc.CallableService;
 import tjrpc.rpc.RpcRequest;
 import tjrpc.rpc.RpcResponse;
+import tjrpc.server.AbstractRpcServer;
 import tjrpc.simpletcp.channel.*;
 import tjrpc.simpletcp.util.SimpleTcpServer;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.LogManager;
 
-public class SocketRpcServer implements ObjectDispatcher {
-	private static final Logger logger = LogManager
+public class SocketRpcServer extends AbstractRpcServer {
+	static final Logger logger = LogManager
 			.getLogger(SocketRpcServer.class);
 
-	private TCPServer server;
-	private ObjectDispatcherImpl objectDispatcher = new ObjectDispatcherImpl();
-	private CallableService callableService = new CallableService(objectDispatcher);
-	private JsonRpcSerializer serializer = new JsonRpcSerializer();
-
-	/* BEGIN: Delegate methods to the objectDispatcher object */
-
-	public Object addObject(String name, Object object) {
-		return objectDispatcher.addObject(name, object);
-	}
-
-	public Object removeObject(String name) {
-		return objectDispatcher.removeObject(name);
-	}
-
-	public Object call(String objectName, String methodName, Object[] args)
-			throws NestedException, DispatchException {
-		return objectDispatcher.call(objectName, methodName, args);
-	}
-
-	/* END: Delegate methods to the objectDispatcher object */
-
+	TCPServer server;
 	public SocketRpcServer(int port) throws IOException {
 		server = new TCPServer(port);
 	}
 
 	public SocketRpcServer(ServerSocket serverSocket) {
 		server = new TCPServer(serverSocket);
-	}
-
-	public void start() {
-		server.start();
-		logger.info("RPC Server started.");
-	}
-
-	public void stop() {
-		server.stop();
-		logger.info("RPC Server stopped.");
 	}
 
 	private class TCPServer extends SimpleTcpServer {
@@ -113,11 +78,27 @@ public class SocketRpcServer implements ObjectDispatcher {
 			} catch (JsonIOException e) {
 				logger.error(String.format("Connection is broken from %s",
 						clientSocket.getInetAddress().toString()), e);
+			} catch (IllegalArgumentException e) {
+				logger.error(String.format("Bad request from %s",
+						clientSocket.getInetAddress().toString()), e);
+				channel.close();
 			} finally {
 				logger.info(String.format("Connection closing %s",
 						clientSocket.getInetAddress().toString()));
 				channel.close();
 			}
 		}
+	}
+	
+	@Override
+	public void start() {
+		server.start();
+		logger.info("RPC Server started.");
+	}
+
+	@Override
+	public void stop() {
+		server.stop();
+		logger.info("RPC Server stopped.");
 	}
 }

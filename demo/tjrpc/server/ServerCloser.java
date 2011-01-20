@@ -1,17 +1,25 @@
 package tjrpc.server;
 
-import tjrpc.simpletcp.server.SocketRpcServer;
 
 public class ServerCloser {
-	private final SocketRpcServer server;
+	private final RpcServer server;
 
-	public ServerCloser(SocketRpcServer server) {
+	public ServerCloser(RpcServer server) {
 		this.server = server;
 	}
 	
 	public void close() {
-		System.out.println("Trying to close server...");
-		this.server.stop();
-		System.out.println("Done.");
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					sleep(1000);
+				} catch (InterruptedException e) {
+				}
+				System.out.println("Trying to close server...");
+				ServerCloser.this.server.stop();
+				System.out.println("Done.");
+			}
+		}.start();
 	}
 }

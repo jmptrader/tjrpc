@@ -92,7 +92,7 @@ public class JsonRpcSerializer {
 				requestObj.getValue().put("success", JSONBoolean.FALSE);
 				requestObj.getValue().put("exceptionClass",
 						new JSONString(response.getExceptionClass()));
-				requestObj.getValue().put("exceptionClass",
+				requestObj.getValue().put("exceptionMessage",
 						new JSONString(response.getExceptionMessage()));
 			}
 			return requestObj;

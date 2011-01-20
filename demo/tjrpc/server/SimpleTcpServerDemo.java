@@ -2,7 +2,7 @@ package tjrpc.server;
 
 import tjrpc.simpletcp.server.SocketRpcServer;
 
-public class ServerDemo {
+public class SimpleTcpServerDemo {
 
 	/**
 	 * @author Kunshan Wang
@@ -10,7 +10,7 @@ public class ServerDemo {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		SocketRpcServer svr = new SocketRpcServer(1244);
+		RpcServer svr = new SocketRpcServer(1244);
 		
 		Adder adder = new Adder();
 		svr.addObject("adder", adder);

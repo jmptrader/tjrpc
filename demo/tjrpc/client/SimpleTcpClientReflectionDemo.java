@@ -1,16 +1,16 @@
 package tjrpc.client;
 
-import tjrpc.simpletcp.client.ProxyManager;
+import tjrpc.simpletcp.client.SimpleTcpRpcClient;
 
 interface IAdder {
 	public int add(int a, int b);
 }
 
-public class ClientReflectionDemo {
+public class SimpleTcpClientReflectionDemo {
 
 	public static void main(String[] args) {
-		IAdder adderProxy = ProxyManager.newProxy("127.0.0.1", 1244,
-				"adder", IAdder.class);
+		SimpleTcpRpcClient client = new SimpleTcpRpcClient("127.0.0.1", 1244);
+		IAdder adderProxy = client.createProxy("adder", IAdder.class);
 
 		int invocationCount = 0;
 		long startTime = System.currentTimeMillis();
@@ -33,9 +33,7 @@ public class ClientReflectionDemo {
 				}
 			}
 		} finally {
-
-			ProxyManager.closeProxy(adderProxy);
-
+			client.close();
 		}
 	}
 

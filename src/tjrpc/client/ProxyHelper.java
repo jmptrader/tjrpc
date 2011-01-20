@@ -16,21 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.simpletcp.client;
+package tjrpc.client;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 public class ProxyHelper implements InvocationHandler {
-	private ClientAgent clientAgent;
+	private RpcClient client;
 	private String objectName;
 
-	public ClientAgent getClientAgent() {
-		return clientAgent;
+	public RpcClient getClient() {
+		return client;
 	}
 
-	public void setClientAgent(ClientAgent clientAgent) {
-		this.clientAgent = clientAgent;
+	public void setClient(RpcClient client) {
+		this.client = client;
 	}
 
 	public String getObjectName() {
@@ -44,11 +44,7 @@ public class ProxyHelper implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		return clientAgent.call(objectName, method.getName(), args);
-	}
-	
-	public void close() {
-		clientAgent.getChannel().close();
+		return client.call(objectName, method.getName(), args);
 	}
 
 }

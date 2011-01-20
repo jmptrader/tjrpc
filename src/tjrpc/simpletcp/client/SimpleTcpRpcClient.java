@@ -18,35 +18,50 @@
  */
 package tjrpc.simpletcp.client;
 
+import java.net.Socket;
+
+import tjrpc.client.AbstractRpcClient;
+import tjrpc.client.ClientException;
+import tjrpc.client.RemoteException;
 import tjrpc.json.JsonRpcSerializer;
 import tjrpc.rpc.RpcRequest;
 import tjrpc.rpc.RpcResponse;
-import tjrpc.simpletcp.channel.JsonChannel;
+import tjrpc.simpletcp.channel.SocketJsonChannel;
 
-public class ClientAgent {
+public class SimpleTcpRpcClient extends AbstractRpcClient {
 
-	private JsonChannel channel;
+	SocketJsonChannel channel;
 	private JsonRpcSerializer serializer = new JsonRpcSerializer();
 
-	public JsonChannel getChannel() {
-		return channel;
+	public SimpleTcpRpcClient(Socket socket) {
+		this.channel = new SocketJsonChannel(socket);
 	}
 
-	public void setChannel(JsonChannel channel) {
-		this.channel = channel;
+	public SimpleTcpRpcClient(String host, int port) {
+		Socket socket;
+		try {
+			socket = new Socket(host, port);
+		} catch (Exception e) {
+			throw new ClientException(e);
+		}
+		this.channel = new SocketJsonChannel(socket);
 	}
 
+	public void close() {
+		channel.close();
+	}
+
+	@Override
 	public Object call(String object, String method, Object[] args) {
 		RpcRequest req = new RpcRequest(object, method, args);
 		channel.write(serializer.requestToJson(req));
 		RpcResponse resp = serializer.jsonToResponse(channel.read());
 
 		if (!resp.isSuccess()) {
-			throw new RemoteException(resp.getExceptionClass() + ":"
-					+ resp.getExceptionMessage());
+			throw new RemoteException(resp.getExceptionClass(),
+					resp.getExceptionMessage());
 		}
 
 		return resp.getValue();
 	}
-
 }

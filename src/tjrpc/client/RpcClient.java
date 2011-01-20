@@ -16,24 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with TJRPC.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tjrpc.simpletcp.client;
+package tjrpc.client;
 
-public class RemoteException extends ClientException {
-	private static final long serialVersionUID = 7095597450462300756L;
+import tjrpc.dispatch.Callable;
 
-	public RemoteException() {
-	}
-
-	public RemoteException(String message) {
-		super(message);
-	}
-
-	public RemoteException(Throwable cause) {
-		super(cause);
-	}
-
-	public RemoteException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+public interface RpcClient extends Callable, ProxyFactory {
+	void close();
 }
