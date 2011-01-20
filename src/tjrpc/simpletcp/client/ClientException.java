@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Kunshan Wang
+ * Copyright 2010,2011 Kunshan Wang
  * 
  * This file is part of TJRPC
  * 

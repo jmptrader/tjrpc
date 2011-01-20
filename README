@@ -1,6 +1,6 @@
 TJRPC - Trivial JSON Remote Procedure Call
 
-Copyright 2010 Kunshan Wang
+Copyright 2010,2011 Kunshan Wang
 
 TJRPC is a JSON-based RPC tool.  It is a small toy project to be used where
 you just need some simple RPC capability, but do not worry much about its
